@@ -37,29 +37,44 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
+     html
+     javascript
+     purescript
      auto-completion
      better-defaults
      emacs-lisp
      git
      markdown
+     ;;(markdown :variables markdown-live-preview-engine 'vmd)
      org
      (shell :variables
              shell-default-height 30
              shell-default-position 'bottom)
-     ;; spell-checking
+     spell-checking
      syntax-checking
-     ;; version-control
+     version-control
      latex
      (latex :variables latex-build-command "LatexMk") 
-     ;; python
+     bibtex
+     python
      c-c++
-     ;; csharp
+     csharp
+     fsharp
+     haskell
+     liquid-types
+     '(auto-completion
+       (haskell :variables haskell-completion-backend 'intero))
+     scala
+     yaml
+     themes-megapack
+     ;;emoji
+     sql
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(intero rainbow-mode mmm-mode)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -83,12 +98,12 @@ values."
   ;; spacemacs settings.
   (setq-default
    ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
-   ;; possible. Set it to nil if you have no way to use HTTPS in your
+   ;; pos(setq exec-path-from-shell-check-startup-files nil)sible. Set it to nil if you have no way to use HTTPS in your
    ;; environment, otherwise it is strongly recommended to let it set to t.
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
-   dotspacemacs-elpa-https t
+   dotspacemacs-elpa-https nil
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
    ;; If non nil then spacemacs will check for updates at startup
@@ -131,14 +146,15 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '(monokai
+                         spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+                               :size 12
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -254,7 +270,7 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers t
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -271,7 +287,7 @@ values."
    dotspacemacs-highlight-delimiters 'all
    ;; If non nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
-   dotspacemacs-persistent-server nil
+   dotspacemacs-persistent-server t
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
@@ -295,6 +311,7 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (setq exec-path-from-shell-check-startup-files nil)  
   )
 
 (defun dotspacemacs/user-config ()
@@ -305,35 +322,62 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-    (defun copy-to-clipboard ()
-      "Copies selection to x-clipboard."
-      (interactive)
-      (if (display-graphic-p)
-          (progn
-            (message "Yanked region to x-clipboard!")
-            (call-interactively 'clipboard-kill-ring-save)
-            )
-        (if (region-active-p)
-            (progn
-              (shell-command-on-region (region-beginning) (region-end) "xsel -i -b")
-              (message "Yanked region to clipboard!")
-              (deactivate-mark))
-          (message "No region active; can't yank to clipboard!")))
-      )
+  (add-hook 'haskell-mode-hook 'intero-mode)
+  (xterm-mouse-mode 1)
 
-    (defun paste-from-clipboard ()
-      "Pastes from x-clipboard."
-      (interactive)
-      (if (display-graphic-p)
-          (progn
-            (clipboard-yank)
-            (message "graphics active")
-            )
-        (insert (shell-command-to-string "xsel -o -b"))
-        )
-      )
-  (evil-leader/set-key "o y" 'copy-to-clipboard)
-  (evil-leader/set-key "o p" 'paste-from-clipboard)
+  ;; Defeat smartparens-mode in evil mode
+  (add-hook 'evil-insert-state-entry-hook 'turn-off-smartparens-mode)
+  (add-hook 'evil-insert-state-exit-hook 'turn-on-smartparens-mode)
+
+  ;; Alternative way to defeat smartparens-mode in hybrid mode
+  (add-hook 'evil-hybrid-state-entry-hook 'turn-off-smartparens-mode)
+  (add-hook 'evil-hybrid-state-exit-hook 'turn-on-smartparens-mode)
+
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex) ; with AUCTeX LaTeX mode
+  (add-hook 'latex-mode-hook 'turn-on-reftex) ; with Emacs latex mode
+  (add-hook 'org-mode-hook 'turn-on-reftex) ; with Org mode
+
+  ;; set pdf viewer on OSX and Linux
+  (cond
+   ((string-equal system-type "darwin")
+    (progn (setq TeX-view-program-selection '((output-pdf "Skim")))))
+   ((string-equal system-type "gnu/linux")
+    (progn (setq TeX-view-program-selection '((output-pdf "Okular"))))))
+
+  ;; enable PDF-LaTeX synchronization
+  ;; press SPC m v to highlight line in PDF
+  ;; press shift cmd and click in PDF to show line in sourcecode
+  (setq TeX-source-correlate-mode t)
+  (setq TeX-source-correlate-start-server t)
+  (setq TeX-source-correlate-method 'synctex)
+  (setq TeX-view-program-list
+        '(("Okular" "okular --unique %o#src:%n%b")
+          ("Skim" "displayline -b -g %n %o %b")))
+
+  ;; syntax highlighting in source code blocks
+  (setq org-src-fontify-natively t)
+
+  (setq mmm-global-mode 'maybe)
+
+  (defun my-mmm-markdown-auto-class (lang &optional submode)
+    "Define a mmm-mode class for LANG in `markdown-mode' using SUBMODE.
+     If SUBMODE is not provided, use `LANG-mode' by default."
+    (let ((class (intern (concat "markdown-" lang)))
+          (submode (or submode (intern (concat lang "-mode"))))
+          (front (concat "^```" lang "[\n\r]+"))
+          (back "^```"))
+      (mmm-add-classes (list (list class :submode submode :front front :back back)))
+      (mmm-add-mode-ext-class 'markdown-mode nil class)))
+
+  ;; Mode names that derive directly from the language name
+  (mapc 'my-mmm-markdown-auto-class
+        '("awk" "bibtex" "c" "cpp" "css" "html" "latex" "lisp" "makefile"
+          "markdown" "python" "r" "ruby" "sql" "stata" "xml" "fsharp" "csharp"
+          "haskell" "javascript" "scala"))
+
+  ;;(add-hook 'markdown-mode-hook 'vmd-mode)
+  (setq mmm-parse-when-idle 't)
+  (global-set-key (kbd "C-c m") 'mmm-parse-buffer)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -344,14 +388,19 @@ you should place your code here."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(TeX-engine (quote xetex))
- '(reftex-plug-into-AUCTeX t)
- '(safe-local-variable-values (quote ((TeX-command-extra-options . "-shell-escape"))))
+ '(custom-safe-themes
+   (quote
+    ("f5512c02e0a6887e987a816918b7a684d558716262ac7ee2dd0437ab913eaec6" default)))
+ '(menu-bar-mode t)
  '(package-selected-packages
    (quote
-    (xterm-color smeargle shell-pop orgit org-projectile org-present org org-pomodoro alert log4e gntp org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help disaster company-statistics company-c-headers company-auctex company cmake-mode clang-format auto-yasnippet yasnippet auctex-latexmk auctex ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async quelpa package-build spacemacs-theme))))
+    (button-lock psci purescript-mode psc-ide sql-indent winum org-ref key-chord ivy helm-bibtex parsebib emoji-cheat-sheet-plus company-emoji biblio biblio-core vmd-mode noflet ensime sbt-mode scala-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flyspell-correct-helm flyspell-correct diff-hl cython-mode company-anaconda auto-dictionary anaconda-mode pythonic zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme madhat2r-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme rainbow-mode fsharp-mode company-quickhelp web-beautify omnisharp shut-up livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc csharp-mode company-tern dash-functional tern coffee-mode yaml-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data intero hlint-refactor hindent helm-hoogle haskell-snippets flycheck-haskell company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode unfill fuzzy xterm-color smeargle shell-pop orgit org-projectile org-present org org-pomodoro alert log4e gntp org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help disaster company-statistics company-c-headers company-auctex company cmake-mode clang-format auto-yasnippet yasnippet auctex-latexmk auctex ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async quelpa package-build spacemacs-theme)))
+ '(reftex-plug-into-AUCTeX t t)
+ '(safe-local-variable-values (quote ((TeX-command-extra-options . "-shell-escape")))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
