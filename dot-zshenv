@@ -1,0 +1,5 @@
+export PATH=.cabal-sandbox/bin:$HOME/.cabal/bin:$HOME/.local/bin:$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+export LD_LIBRARY_PATH=/home/oscarvarto/gitRepos/haskellWork/qtah-examples-0.3.0/.stack-work/install/x86_64-linux/lts-8.21/8.0.2/lib/x86_64-linux-ghc-8.0.2/qtah-cpp-qt5-0.3.1-25m66RfQAmwBKYB2irPGc1
+
+export TERM='xterm-256color'
