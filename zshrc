@@ -1,82 +1,106 @@
-export TERM='xterm-256color'
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-POWERLEVEL9K_MODE='nerdfont-complete'
-#POWERLEVEL9K_MODE='awesome-patched'
-#POWERLEVEL9K_MODE='awesome-fontconfig'
-#POWERLEVEL9K_MODE='awesome-mapped-fontconfig'
+# Path to your oh-my-zsh installation.
+export ZSH="/home/oscarvarto/.oh-my-zsh"
 
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="agnoster"
 
-# Prompt settings
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
-POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="%K{white}%k"
-POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%K{green}%F{black} \uf155 %f%F{green}%k\ue0b0%f "
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
-#POWERLEVEL9K_ANACONDA_BACKGROUND=''
-POWERLEVEL9K_ANACONDA_FOREGROUND='white'
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
 
-# VCS colors
-POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='white'
-POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='magenta'
-POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='green'
-POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='black'
-POWERLEVEL9K_VCS_CLEAN_BACKGROUND='green'
-POWERLEVEL9K_VCS_CLEAN_FOREGROUND='black'
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
-# Dir colors
-POWERLEVEL9K_DIR_HOME_BACKGROUND='black'
-POWERLEVEL9K_DIR_HOME_FOREGROUND='white'
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='black'
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND='white'
-POWERLEVEL9K_DIR_DEFAULT_BACKGROUND='yellow'
-POWERLEVEL9K_DIR_DEFAULT_FOREGROUND='black'
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
 
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda vcs dir)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status)
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
 
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-POWERLEVEL9K_SHORTEN_DELIMITER=""
-POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
 
-# To make mactex available in PATH
-eval `/usr/libexec/path_helper -s`
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
 
-#eval "$(pyenv init -)"
-#eval "$(pyenv virtualenv-init -)"
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
 
-# cmake and cmake-gui
-PATH=/Applications/CMake.app/Contents/bin:$PATH
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
 
-export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
-PATH=$JAVA_HOME/bin:$PATH
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
 
-# haskell
-PATH=~/.local/bin:~/.cabal/bin:$PATH
+# Uncomment the following line to display red dots whilst waiting for completion.
+# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
+# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# COMPLETION_WAITING_DOTS="true"
 
-# dotnet
-PATH=~/fake-dotnetcore:$PATH
-PATH=/usr/local/share/dotnet:$PATH
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-# rust
-PATH="$HOME/.cargo/bin:$PATH"
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
 
-export PATH
-# PATH=/Users/oscarvarto/Library/Python/3.7/bin:$PATH
-. /usr/local/anaconda3/etc/profile.d/conda.sh
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
 
-[[ -z $TMUX ]] || conda deactivate; conda activate idpJupyter
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git tmux)
 
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/oscarvarto/Downloads/DataEngDemo-a624d3c30fe9.json
+ZSH_TMUX_AUTOSTART=true
 
-alias blog='make devserver'
-alias blog-stop='./develop_server.sh stop'
-alias blog-update='ghp-import -b master output'
+source $ZSH/oh-my-zsh.sh
 
-alias gpush='git push origin master'
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 #alias sp='HOME=~/spacemacs emacs --daemon=instance1'
 alias sp='emacs --daemon=instance1'
@@ -88,7 +112,7 @@ alias ek="emacsclient -e -s instance1 '(kill-emacs)'"
 
 alias ppath='echo -e ${PATH//:/\\n}'
 
-alias tmd='source ~/.default-tmux.sh'
-alias tmk='tmux kill-session -t default'
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+PATH=$PATH:$JAVA_HOME/bin
 
-#source ~/.iterm2_shell_integration.zsh
+[ -f "/home/oscarvarto/.ghcup/env" ] && source "/home/oscarvarto/.ghcup/env" # ghcup-env
