@@ -1,14 +1,21 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/oscarvarto/.oh-my-zsh"
+ZSH=/usr/share/oh-my-zsh/
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
+ZSH_THEME="dracula-pro"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -21,7 +28,7 @@ ZSH_THEME="agnoster"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
@@ -42,11 +49,9 @@ ZSH_THEME="agnoster"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
-# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -70,11 +75,9 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux)
-
-ZSH_TMUX_AUTOSTART=true
-
-source $ZSH/oh-my-zsh.sh
+#plugins=(git tmux)
+plugins=(git)
+#ZSH_TMUX_AUTOSTART=true
 
 # User configuration
 
@@ -99,20 +102,58 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
+alias zshconfig="et ~/.zshrc"
+alias i3config="et ~/.i3/config"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-#alias sp='HOME=~/spacemacs emacs --daemon=instance1'
-alias sp='emacs --daemon=instance1'
-#alias et='HOME=~/spacemacs emacsclient -qc -nw -s instance1'
-alias et='emacsclient -qc -nw -s instance1'
-#alias em='HOME=~/spacemacs emacsclient -nqc -s instance1'
-alias em='emacsclient -nqc -s instance1'
-alias ek="emacsclient -e -s instance1 '(kill-emacs)'"
+export EMACS_SERVER_SOCKET="/home/oscarvarto/.emacs.d/server-dir"
+alias et='emacsclient -qc -nw -s $EMACS_SERVER_SOCKET'
+alias em='emacsclient -nqc -s $EMACS_SERVER_SOCKET'
+alias sp='emacs --daemon=/home/oscarvarto/.emacs.d/server-dir'
+alias ek="emacsclient -s $EMACS_SERVER_SOCKET -e '(kill-emacs)'"
+alias suet="SUDO_EDITOR=\"emacsclient -qc -nw -s $EMACS_SERVER_SOCKET\" sudo -e"
+alias suem="SUDO_EDITOR=\"emacsclient -nqc -s $EMACS_SERVER_SOCKET\" sudo -e"
+
+export EDITOR='emacsclient -qc -nw -s /home/oscarvarto/.emacs.d/server-dir'
+export SUDO_EDITOR=nvim
+
+alias vim=nvim
+alias vi=nvim
 
 alias ppath='echo -e ${PATH//:/\\n}'
 
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-PATH=$PATH:$JAVA_HOME/bin
+PATH=~/.screenlayout:$PATH
+
+alias i3class="xprop | grep CLASS"
+
+#export BROWSER=firefox
+export GHCUP_INSTALL_BASE_PREFIX=$HOME
+
+# https://github.com/syl20bnr/spacemacs/wiki/Terminal
+#export TERM=xterm-24bit
+#eval `tset -s xterm-24bit`
+alias ssh="TERM=xterm-256color ssh"
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+
+#export JAVA_HOME=/usr/lib/jvm/default
+
+ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
+if [[ ! -d $ZSH_CACHE_DIR ]]; then
+  mkdir $ZSH_CACHE_DIR
+fi
+
+source $ZSH/oh-my-zsh.sh
+
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+#source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 [ -f "/home/oscarvarto/.ghcup/env" ] && source "/home/oscarvarto/.ghcup/env" # ghcup-env
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+#[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+typeset -U path
