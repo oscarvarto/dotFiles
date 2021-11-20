@@ -15,7 +15,7 @@ ZSH=/usr/share/oh-my-zsh/
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="dracula-pro"
+# ZSH_THEME="agnoster"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -104,12 +104,11 @@ plugins=(git)
 # Example aliases
 alias zshconfig="et ~/.zshrc"
 alias i3config="et ~/.i3/config"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 export EMACS_SERVER_SOCKET="/home/oscarvarto/.emacs.d/server-dir"
 alias et='emacsclient -qc -nw -s $EMACS_SERVER_SOCKET'
 alias em='emacsclient -nqc -s $EMACS_SERVER_SOCKET'
-alias sp='emacs --daemon=/home/oscarvarto/.emacs.d/server-dir'
+alias sp='emacs --daemon=$EMACS_SERVER_SOCKET'
 alias ek="emacsclient -s $EMACS_SERVER_SOCKET -e '(kill-emacs)'"
 alias suet="SUDO_EDITOR=\"emacsclient -qc -nw -s $EMACS_SERVER_SOCKET\" sudo -e"
 alias suem="SUDO_EDITOR=\"emacsclient -nqc -s $EMACS_SERVER_SOCKET\" sudo -e"
@@ -122,9 +121,9 @@ alias vi=nvim
 
 alias ppath='echo -e ${PATH//:/\\n}'
 
-PATH=~/.screenlayout:$PATH
+#PATH=~/.screenlayout:$PATH
 
-alias i3class="xprop | grep CLASS"
+#alias i3class="xprop | grep CLASS"
 
 #export BROWSER=firefox
 export GHCUP_INSTALL_BASE_PREFIX=$HOME
@@ -149,11 +148,11 @@ source $ZSH/oh-my-zsh.sh
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-#source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 [ -f "/home/oscarvarto/.ghcup/env" ] && source "/home/oscarvarto/.ghcup/env" # ghcup-env
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 #[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-typeset -U path
+typeset -U PATH
