@@ -106,12 +106,12 @@ alias zshconfig="et ~/.zshrc"
 alias i3config="et ~/.i3/config"
 
 export EMACS_SERVER_SOCKET="/home/oscarvarto/.emacs.d/server-dir"
-alias et='emacsclient -qc -nw -s $EMACS_SERVER_SOCKET'
-alias em='emacsclient -nqc -s $EMACS_SERVER_SOCKET'
-alias sp='emacs --daemon=$EMACS_SERVER_SOCKET'
+alias et="emacsclient -qc -nw -s $EMACS_SERVER_SOCKET -a ''"
+alias em="emacsclient -nqc -s $EMACS_SERVER_SOCKET -a ''"
+alias ema='emacs --daemon=$EMACS_SERVER_SOCKET'
 alias ek="emacsclient -s $EMACS_SERVER_SOCKET -e '(kill-emacs)'"
-alias suet="SUDO_EDITOR=\"emacsclient -qc -nw -s $EMACS_SERVER_SOCKET\" sudo -e"
-alias suem="SUDO_EDITOR=\"emacsclient -nqc -s $EMACS_SERVER_SOCKET\" sudo -e"
+alias suet="SUDO_EDITOR=\"emacsclient -qc -nw -s $EMACS_SERVER_SOCKET -a ''\" sudo -e"
+alias suem="SUDO_EDITOR=\"emacsclient -nqc -s $EMACS_SERVER_SOCKET -a ''\" sudo -e"
 
 export EDITOR='emacsclient -qc -nw -s /home/oscarvarto/.emacs.d/server-dir'
 export SUDO_EDITOR=nvim
